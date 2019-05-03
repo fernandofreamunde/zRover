@@ -4,6 +4,7 @@
 namespace App\Service;
 
 
+use App\Entity\Field;
 use App\Exception\UnsupportedInstruction;
 
 class Rover
@@ -14,12 +15,17 @@ class Rover
      * @var Compass
      */
     private $compass;
+    /**
+     * @var Field
+     */
+    private $field;
 
-    public function __construct(Compass $compass, int $x = 0, int $y = 0)
+    public function __construct(Compass $compass, Field $field, int $x = 0, int $y = 0)
     {
         $this->x = $x;
         $this->y = $y;
         $this->compass = $compass;
+        $this->field = $field;
     }
 
     public function getPosition()
@@ -43,15 +49,27 @@ class Rover
     {
         switch ($this->compass->getDirection()){
             case 'N':
+                if ($this->field->getMaxY() == $this->y) {
+                    throw new UnsupportedInstruction('Can\'t move out of the field');
+                }
                 $this->y++;
                 break;
             case 'E':
+                if ($this->field->getMaxX() == $this->x) {
+                    throw new UnsupportedInstruction('Can\'t move out of the field');
+                }
                 $this->x++;
                 break;
             case 'S':
+                if (0 == $this->y) {
+                    throw new UnsupportedInstruction('Can\'t move out of the field');
+                }
                 $this->y--;
                 break;
             case 'W':
+                if (0 == $this->x) {
+                    throw new UnsupportedInstruction('Can\'t move out of the field');
+                }
                 $this->x--;
                 break;
         }
