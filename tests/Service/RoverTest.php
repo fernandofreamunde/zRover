@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service;
 
+use App\Entity\Field;
 use App\Exception\UnsupportedInstruction;
 use App\Service\Compass;
 use App\Service\Rover;
@@ -15,9 +16,13 @@ class RoverTest extends TestCase
 
     public function setUp(): void
     {
+        //Field is so simple not gonna test
+        $field = new Field();
+        $field->setMaxX(10);
+        $field->setMaxY(15);
         $this->compass = $this->createMock(Compass::class);
-        $this->rover = new Rover($this->compass);
-        $this->roverWithPosition = new Rover($this->compass, 5, 5);
+        $this->rover = new Rover($this->compass, $field);
+        $this->roverWithPosition = new Rover($this->compass, $field, 5, 5);
     }
 
     public function testGettingInitialPosition()
@@ -82,5 +87,12 @@ class RoverTest extends TestCase
     {
         $this->expectException(UnsupportedInstruction::class);
         $this->rover->execute('W');
+    }
+
+    public function testRoverCantGoOutOfField()
+    {
+        $this->compass->method('getDirection')->willReturn('S');
+        $this->expectException(UnsupportedInstruction::class);
+        $this->rover->execute('MM');
     }
 }
