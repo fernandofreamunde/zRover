@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class CompassTest extends TestCase
 {
-    public function testSettingDirection()
+    public function testGettingDirection()
     {
         $compass = new Compass();
 
