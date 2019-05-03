@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service;
 
+use App\Exception\UnsupportedInstruction;
 use App\Service\Compass;
 use App\Service\Rover;
 use PHPUnit\Framework\TestCase;
@@ -75,5 +76,11 @@ class RoverTest extends TestCase
         $this->rover->execute('MMRMMLMMLMLMLMMMMLMM');
 
         $this->assertSame([5, 5, 'N'], $this->rover->getReport());
+    }
+
+    public function testSettingBadInitialDirection()
+    {
+        $this->expectException(UnsupportedInstruction::class);
+        $this->rover->execute('W');
     }
 }
